@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="usrModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="cita">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="titulo" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="inicio" Type="datetime" Nullable="false" />
+    <Property Name="IdTipoCita" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="estatus" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="pez">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="TiposCitas">
+    <Key>
+      <PropertyRef Name="IdTipoCita" />
+    </Key>
+    <Property Name="IdTipoCita" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="usuario">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" Nullable="false" />
+    <Property Name="loger" Type="varchar" MaxLength="50" />
+    <Property Name="pasword" Type="varchar" MaxLength="50" />
+    <Property Name="nombre" Type="varchar" MaxLength="50" />
+    <Property Name="apellidos" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <Association Name="FK_cita_TiposCitas">
+    <End Role="TiposCitas" Type="Self.TiposCitas" Multiplicity="1" />
+    <End Role="cita" Type="Self.cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TiposCitas">
+        <PropertyRef Name="IdTipoCita" />
+      </Principal>
+      <Dependent Role="cita">
+        <PropertyRef Name="IdTipoCita" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="usrModelStoreContainer">
+    <EntitySet Name="cita" EntityType="Self.cita" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="pez" EntityType="Self.pez" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TiposCitas" EntityType="Self.TiposCitas" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_cita_TiposCitas" Association="Self.FK_cita_TiposCitas">
+      <End Role="TiposCitas" EntitySet="TiposCitas" />
+      <End Role="cita" EntitySet="cita" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

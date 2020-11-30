@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="usrModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="cita">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="titulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="inicio" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="IdTipoCita" Type="Guid" Nullable="false" />
+    <Property Name="estatus" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="TiposCitas" Relationship="Self.FK_cita_TiposCitas" FromRole="cita" ToRole="TiposCitas" />
+  </EntityType>
+  <EntityType Name="pez">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="nombre" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="TiposCitas">
+    <Key>
+      <PropertyRef Name="IdTipoCita" />
+    </Key>
+    <Property Name="IdTipoCita" Type="Guid" Nullable="false" />
+    <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="cita" Relationship="Self.FK_cita_TiposCitas" FromRole="TiposCitas" ToRole="cita" />
+  </EntityType>
+  <EntityType Name="usuario">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="loger" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="pasword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="apellidos" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <Association Name="FK_cita_TiposCitas">
+    <End Role="TiposCitas" Type="Self.TiposCitas" Multiplicity="1" />
+    <End Role="cita" Type="Self.cita" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TiposCitas">
+        <PropertyRef Name="IdTipoCita" />
+      </Principal>
+      <Dependent Role="cita">
+        <PropertyRef Name="IdTipoCita" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="usrEntities3" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="cita" EntityType="Self.cita" />
+    <EntitySet Name="pez" EntityType="Self.pez" />
+    <EntitySet Name="TiposCitas" EntityType="Self.TiposCitas" />
+    <EntitySet Name="usuario" EntityType="Self.usuario" />
+    <AssociationSet Name="FK_cita_TiposCitas" Association="Self.FK_cita_TiposCitas">
+      <End Role="TiposCitas" EntitySet="TiposCitas" />
+      <End Role="cita" EntitySet="cita" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

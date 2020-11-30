@@ -1,0 +1,438 @@
+﻿@model IEnumerable<AutenticacionPersonalizada.Models.cita>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+//import { json } from "modernizr"; 
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar;
+
+        //prueba del cita individual
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "../api/Citas/vercita",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                eventID: v.Id,
+                                title: v.titulo,
+                                start: moment(v.inicio),
+                                description: v.IdTipoCita,
+                                status: v.estatus
+                                
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+        //finpruebaparte1
+        initThemeChooser({
+
+            init: function (themeSystem) {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                themeSystem: themeSystem,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                },
+                initialDate: '2020-11-10',
+                weekNumbers: true,
+                navLinks: true, // can click day/week names to navigate views
+                editable: true,
+                selectable: true,
+                //pruebapaete2
+                select: function (start, end) {
+                    selectedEvent = {
+                        eventID: 0,
+                        title: '',
+                        description: '',
+                        start: start,
+                        end: end,
+                        allDay: false,
+                        color: ''
+                    };
+                    openAddEditForm();
+                    $('#calendar').fullCalendar('unselect');
+                },//finpruebaparte2
+                dateClick: function (info) {
+                     //Guardar
+                    $('#myModalSave').modal();
+                    $('#btnSave').click(function (event) {
+                        var titulo = document.getElementById("titulo").value; 
+                        var inicio = document.getElementById("fecha").value;
+                        var IdTipoCita = document.getElementById("seleccioncita").value;
+                        var estatus = document.getElementById("seleccionestatus").value;
+                        $.ajax({
+                            type: "POST",
+                            url: "../api/Citas/",
+                            data: { "titulo": titulo, "inicio": inicio, "IdTipoCita": IdTipoCita, "estatus": estatus },
+                            dataType: "json",
+                            success: function (result) {
+                                alert('La cita ya está guardada');
+                                $('#myModalSave').modal('hide');
+                            }
+                        }).fail(function () {
+                            alert('Error!!');
+                        });
+                    });
+                },
+                nowIndicator: true,
+                dayMaxEvents: true, // allow "more" link when too many events
+                googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
+                // showNonCurrentDates: false,
+                events: "../api/Citas/vercita",
+                eventClick: function (calEvent) {
+                    selectedEvent = calEvent;  //finpruebaparte3
+                    //modales
+
+                    
+
+                    $('#myModal #eventTitle').text(calEvent.titulo);  //finpruebaparte4
+                    $('#myModal').modal();   //modal
+                    //botones
+                    
+                    //Borrar
+                    $('#btnDelete').click(function (event) {
+                        alert("hola")
+                        //var Id = $(this).data("stid");
+                        //alert(Id);
+                        /*$.ajax({
+                            type: "DELETE",
+                            url: "../api/Citas/" + Id,
+                            success: function (result) {
+                                alert('La cita ya está borrada');
+                                $('#myModal').modal('hide');
+                            }
+                        }).fail(function () {
+                            alert('Error!!');
+                        });*/
+                    });
+
+                    //Editar
+                    $('#btnEdit').click(function () {
+                        var Id = $(this).data("stid");
+                        //alert(Id);
+                        $('#myModalEdit').modal(); 
+                        $('#btnSave-edit').click(function () {
+                            var titulo = document.getElementById("titulo-e").value;
+                            var inicio = document.getElementById("fecha-e").value;
+                            var IdTipoCita = document.getElementById("seleccioncita-e").value;
+                            var estatus = document.getElementById("seleccionestatus-e").value;
+                            $.ajax({
+                                type: "PUT",
+                                url: "../api/Citas/"+Id,
+                                data: { "Id":Id, "titulo": titulo, "inicio": inicio, "IdTipoCita": IdTipoCita, "estatus": estatus },
+                                dataType: "json",
+                                success: function (result) {
+                                    alert('La cita ya está editada');
+                                    $('#myModalSave').modal('hide');
+                                }
+                            }).fail(function () {
+                                alert('Error!!');
+                            });
+                        });
+                    });
+
+                }
+            });
+                calendar.setOption('locale', 'es');
+                calendar.render();
+            },
+
+            change: function (themeSystem) {
+            calendar.setOption('themeSystem', themeSystem);
+            }
+
+        });
+
+    });
+
+</script>
+
+<div class="container-fluid">
+    <h1 class="mt-4">Citas</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Citas</li>
+    </ol>
+    <div id='top'>
+
+        <div class='left'>
+
+            <div id='theme-system-selector' class='selector'>
+                Theme System:
+
+                <select>
+                    <option value='bootstrap' selected>Bootstrap 4</option>
+                    <option value='standard'>unthemed</option>
+                </select>
+            </div>
+
+            <div data-theme-system="bootstrap" class="selector" style="display:none">
+                Theme Name:
+
+                <select>
+                    <option value='' selected>Default</option>
+                    <option value='cerulean'>Cerulean</option>
+                    <option value='cosmo'>Cosmo</option>
+                    <option value='cyborg'>Cyborg</option>
+                    <option value='darkly'>Darkly</option>
+                    <option value='flatly'>Flatly</option>
+                    <option value='journal'>Journal</option>
+                    <option value='litera'>Litera</option>
+                    <option value='lumen'>Lumen</option>
+                    <option value='lux'>Lux</option>
+                    <option value='materia'>Materia</option>
+                    <option value='minty'>Minty</option>
+                    <option value='pulse'>Pulse</option>
+                    <option value='sandstone'>Sandstone</option>
+                    <option value='simplex'>Simplex</option>
+                    <option value='sketchy'>Sketchy</option>
+                    <option value='slate'>Slate</option>
+                    <option value='solar'>Solar</option>
+                    <option value='spacelab'>Spacelab</option>
+                    <option value='superhero'>Superhero</option>
+                    <option value='united'>United</option>
+                    <option value='yeti'>Yeti</option>
+                </select>
+            </div>
+
+            <span id='loading' style='display:none'>loading theme...</span>
+
+        </div>
+
+        <div class='right'>
+            <span class='credits' data-credit-id='bootstrap-standard' style='display:none'>
+                <a href='https://getbootstrap.com/docs/3.3/' target='_blank'>Theme by Bootstrap</a>
+            </span>
+            <span class='credits' data-credit-id='bootstrap-custom' style='display:none'>
+                <a href='https://bootswatch.com/' target='_blank'>Theme by Bootswatch</a>
+            </span>
+        </div>
+
+        <div class='clear'></div>
+    </div>
+    <div id="calendar"></div>
+    <!--<div id="calendar"></div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <p id="pDetails"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>  -->
+    <!--<div id="container-fluid">
+
+        <div data-theme-system="bootstrap" class="selector" style="display:none">
+            accion para la cita:
+
+            <select>
+                <option selected>Default</option>
+                <option>mostrar</option>
+                <option>agregar</option>
+                <option>actualizar</option>
+                <option>borar</option>
+            </select>
+        </div>
+    </div>
+    <div id="container-fluid">
+
+    </div>  -->
+    <!--MODALES: para la interaccion de fullcalendar y las apis (SQL SERVER)-->
+    <!--Modal: para ver y hacer operaciones en cualquier cita-->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <!--<label id="imprime" class="btn btn-default btn-sm pull-right">-->
+                    <span class="glyphicon glyphicon-remove"></span>
+                    <!--Expeimento-->
+                    <div class="card-body">
+                        <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                        <button type="button" id="btnDelete" class="btn btn-default btn-sm pull-right"><span class="fa fa-trash"></span> Eliminar</button>
+                        <button type="button" id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;"><span class="fa fa-edit"></span> Editar</button>
+                    </div>
+                    <!--</label>-->
+                    <!--<button id="btnDelete" class="btn btn-default btn-sm pull-right" data-stid="">
+                        <span class="glyphicon glyphicon-remove"></span> Remove
+                    </button>
+                    <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </button>
+                    <p id="pDetails"></p> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal: para guardar cita-->
+    <div id="myModalSave" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Guardar Cita</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card shadow-lg p-3 mb-5 bg-white ">
+                                    <div class="card-body">
+                                        <form id="form1" method="post" class="needs-validation" novalidate>
+                                            <div class="form-group">
+                                                <label>Titulo</label>
+                                                <input type="text" class="form-control" id="titulo" placeholder="Titulo para la cita" required>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label >Fecha</label>
+                                                <input type="datetime-local" class="form-control" id="fecha" required>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tipo de la cita</label>
+                                                <select class="form-control" id="seleccioncita" required>
+                                                    <option value='' class="form-control">Seleccionar el tipo de cita</option>
+                                                    <option value="818773BF-9FA4-43D8-8E28-A503248544B5" class="form-control">Presencial</option>
+                                                    <option value="91CECB37-210D-47C5-954A-AB9AE3E0E36A" class="form-control">Linea</option>
+                                                </select>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Estatus</label>
+                                                <select class="form-control" id="seleccionestatus" required>
+                                                    <option value="active" class="form-control">Active</option>
+                                                </select>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <button class="btn btn-primary" type="submit" id="btnSave">Enviar</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal: para editar cita-->
+    <div id="myModalEdit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Cita</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card shadow-lg p-3 mb-5 bg-white ">
+                                    <div class="card-body">
+                                        <form id="form1" method="put" class="needs-validation" novalidate>
+                                            <div class="form-group">
+                                                <label>Titulo</label>
+                                                <input type="text" class="form-control" id="titulo-e" placeholder="Titulo para la cita" required>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Fecha</label>
+                                                <input type="datetime-local" class="form-control" id="fecha-e" required>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tipo de la cita</label>
+                                                <select class="form-control" id="seleccioncita-e" required>
+                                                    <option value='' class="form-control">Seleccionar el tipo de cita</option>
+                                                    <option value="818773BF-9FA4-43D8-8E28-A503248544B5" class="form-control">Presencial</option>
+                                                    <option value="91CECB37-210D-47C5-954A-AB9AE3E0E36A" class="form-control">Linea</option>
+                                                </select>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Estatus</label>
+                                                <select class="form-control" id="seleccionestatus-e" required>
+                                                    <option value="active" class="form-control">Active</option>
+                                                    <option value="canceled" class="form-control">Cancelada</option>
+                                                    <option value="closed" class="form-control">Cerrada</option>
+                                                </select>
+                                                <div class="valid-feedback">¡Ok válido!</div>
+                                                <div class="invalid-feedback">Complete el campo.</div>
+                                            </div>
+                                            <button class="btn btn-primary" type="submit" id="btnSave-edit">Editar</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="table-responsive">
+    <table class="table table-bordered" id="dataTable_length" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Cita</th>
+                <th>Eliminar en agenda</th>
+                <th>Editar en agenda</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.titulo</td>
+                    <td><button type="button" id="btnDelete" class="btn btn-default btn-sm pull-right" data-stid="@Html.DisplayFor(modelItem => item.Id)"><span class="fa fa-trash"></span> Eliminar</button></td>
+                    <td><button type="button" id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;" data-stid="@Html.DisplayFor(modelItem => item.Id)"><span class="fa fa-edit"></span> Editar</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

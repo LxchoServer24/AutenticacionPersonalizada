@@ -1,0 +1,89 @@
+﻿@model IEnumerable<AutenticacionPersonalizada.Models.usuario>
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+    <div class="container-fluid">
+        <h1 class="mt-4">Usuarios</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Users</li>
+        </ol>
+        <div>
+            <h2>Bienvenido @User.Identity.Name</h2>
+            <!-- <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>
+                    <p>Nombres de los usuarios</p>
+                </th>
+                <th>
+                    <p>Usuario</p>                      //Html.DisplayNameFor(model => model.loger)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.nombre)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.loger)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                return;
+            }
+        </tbody>
+    </table>  -->
+            <div class="container-fluid">
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table mr-1"></i>
+                        Tabla de datos
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable_length" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>NOMBRE</th>
+                                        <th>APELLIDO</th>
+                                        <th>lOGER</th>
+                                        <th>PASSWORD</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.id</td>
+                                            <td>@item.nombre</td>
+                                            <td>@item.apellidos</td>
+                                            <td>@item.loger</td>
+                                            <td>@item.pasword</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="~/Content/assets/jquery/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+        <script src="~/Content/assets/datatable/jquery/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+        <script src="~/Content/assets/datatable/js/datatable.js"></script>  
+    </div>

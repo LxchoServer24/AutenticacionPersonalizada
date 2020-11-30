@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="usrModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="cita">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="titulo" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="inicio" Type="datetime" Nullable="false" />
+          <Property Name="IdTipoCita" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="estatus" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="pez">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="TiposCitas">
+          <Key>
+            <PropertyRef Name="IdTipoCita" />
+          </Key>
+          <Property Name="IdTipoCita" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="loger" Type="varchar" MaxLength="50" />
+          <Property Name="pasword" Type="varchar" MaxLength="50" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" />
+          <Property Name="apellidos" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_cita_TiposCitas">
+          <End Role="TiposCitas" Type="Self.TiposCitas" Multiplicity="1" />
+          <End Role="cita" Type="Self.cita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposCitas">
+              <PropertyRef Name="IdTipoCita" />
+            </Principal>
+            <Dependent Role="cita">
+              <PropertyRef Name="IdTipoCita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="usrModelStoreContainer">
+          <EntitySet Name="cita" EntityType="Self.cita" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="pez" EntityType="Self.pez" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TiposCitas" EntityType="Self.TiposCitas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_cita_TiposCitas" Association="Self.FK_cita_TiposCitas">
+            <End Role="TiposCitas" EntitySet="TiposCitas" />
+            <End Role="cita" EntitySet="cita" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="usrModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="cita">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="titulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="inicio" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IdTipoCita" Type="Guid" Nullable="false" />
+          <Property Name="estatus" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TiposCitas" Relationship="Self.FK_cita_TiposCitas" FromRole="cita" ToRole="TiposCitas" />
+        </EntityType>
+        <EntityType Name="pez">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="nombre" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TiposCitas">
+          <Key>
+            <PropertyRef Name="IdTipoCita" />
+          </Key>
+          <Property Name="IdTipoCita" Type="Guid" Nullable="false" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="cita" Relationship="Self.FK_cita_TiposCitas" FromRole="TiposCitas" ToRole="cita" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="loger" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="pasword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="apellidos" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_cita_TiposCitas">
+          <End Role="TiposCitas" Type="Self.TiposCitas" Multiplicity="1" />
+          <End Role="cita" Type="Self.cita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposCitas">
+              <PropertyRef Name="IdTipoCita" />
+            </Principal>
+            <Dependent Role="cita">
+              <PropertyRef Name="IdTipoCita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="usrEntities3" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="cita" EntityType="Self.cita" />
+          <EntitySet Name="pez" EntityType="Self.pez" />
+          <EntitySet Name="TiposCitas" EntityType="Self.TiposCitas" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" />
+          <AssociationSet Name="FK_cita_TiposCitas" Association="Self.FK_cita_TiposCitas">
+            <End Role="TiposCitas" EntitySet="TiposCitas" />
+            <End Role="cita" EntitySet="cita" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="usrModelStoreContainer" CdmEntityContainer="usrEntities3">
+          <EntitySetMapping Name="cita">
+            <EntityTypeMapping TypeName="usrModel.cita">
+              <MappingFragment StoreEntitySet="cita">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="titulo" ColumnName="titulo" />
+                <ScalarProperty Name="inicio" ColumnName="inicio" />
+                <ScalarProperty Name="IdTipoCita" ColumnName="IdTipoCita" />
+                <ScalarProperty Name="estatus" ColumnName="estatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="pez">
+            <EntityTypeMapping TypeName="usrModel.pez">
+              <MappingFragment StoreEntitySet="pez">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TiposCitas">
+            <EntityTypeMapping TypeName="usrModel.TiposCitas">
+              <MappingFragment StoreEntitySet="TiposCitas">
+                <ScalarProperty Name="IdTipoCita" ColumnName="IdTipoCita" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usuario">
+            <EntityTypeMapping TypeName="usrModel.usuario">
+              <MappingFragment StoreEntitySet="usuario">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="loger" ColumnName="loger" />
+                <ScalarProperty Name="pasword" ColumnName="pasword" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="apellidos" ColumnName="apellidos" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
